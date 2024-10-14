@@ -10,12 +10,15 @@ public class Diploma {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private Long id;
-    @Column(name = "diploma_diplomado")
+    @ManyToOne
+    @JoinColumn(name = "diploma_diplomado", nullable = false)
     private Diplomado diplomado;
-    @Column(name = "diploma_curso")
+    @ManyToOne
+    @JoinColumn(name = "diploma_curso", nullable = false)
     private Curso curso;
     @Column(name = "diploma_data")
     private Date data;
+    @Enumerated(EnumType.STRING)
     @Column(name = "diploma_sexo")
     private Sexo sexo;
     @Column(name = "diploma_nomeReitor")

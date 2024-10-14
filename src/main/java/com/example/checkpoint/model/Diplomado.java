@@ -13,7 +13,7 @@ import lombok.Setter;
 public class Diplomado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @Column(name = "diplomado_nome")
     private String nome;
     @Column(name = "diplomado_nacionalidade")

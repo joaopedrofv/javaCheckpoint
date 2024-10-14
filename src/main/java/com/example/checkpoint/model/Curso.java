@@ -8,9 +8,10 @@ import jakarta.persistence.*;
 public class Curso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @Column(name = "curso_nome")
     private String nome;
+    @Enumerated(EnumType.STRING)
     @Column(name = "curso_tipo")
     private Tipo tipo;
 

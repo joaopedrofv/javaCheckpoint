@@ -1,7 +1,10 @@
 package com.example.checkpoint.controller;
 
+import com.example.checkpoint.dto.Diplomado.DiplomadoRequest;
+import com.example.checkpoint.dto.Diplomado.DiplomadoResponse;
 import com.example.checkpoint.model.Diplomado;
 import com.example.checkpoint.repository.DiplomadoRepository;
+import com.example.checkpoint.service.DiplomadoMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -16,26 +19,27 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/diplomados")
+@RequestMapping(value = "/diplomados", produces = {"application/json"})
 @Tag(name = "api-diplomados")
 public class DiplomadoController {
 
     @Autowired
     private DiplomadoRepository diplomadoRepository;
+    @Autowired
+    private DiplomadoMapper diplomadoMapper;
 
-    // Endpoint para criar um diplomado
     @Operation(summary = "Cria um diplomado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Diplomado criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Atributos inválidos fornecidos")
     })
-    @PostMapping
-    public ResponseEntity<Diplomado> createDiplomado(@Valid @RequestBody Diplomado diplomado) {
-        Diplomado novoDiplomado = DiplomadoRepository.save(diplomado);
-        return new ResponseEntity<>(novoDiplomado, HttpStatus.CREATED);
+    public ResponseEntity<DiplomadoResponse> createDiplomado(@Valid @RequestBody DiplomadoRequest diplomadoRequest) {
+        Diplomado diplomadoConvertido = diplomadoMapper.requestRecordToDiplomado(diplomadoRequest);
+        Diplomado diplomadoCriado = diplomadoRepository.save(diplomadoConvertido);
+        DiplomadoResponse diplomadoResponse = diplomadoMapper.diplomadoResponse(diplomadoCriado);
+        return new ResponseEntity<>(diplomadoResponse, HttpStatus.CREATED);
     }
 
-    // Endpoint para obter todos os diplomados
     @Operation(summary = "Busca todos os diplomados")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
@@ -50,7 +54,6 @@ public class DiplomadoController {
         return new ResponseEntity<>(diplomados, HttpStatus.OK);
     }
 
-    // Endpoint para obter um diplomado por ID
     @Operation(summary = "Busca um diplomado por ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
@@ -62,7 +65,6 @@ public class DiplomadoController {
         return diplomado.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // Endpoint para atualizar um diplomado
     @Operation(summary = "Atualiza um diplomado existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Diplomado atualizado com sucesso"),
@@ -85,7 +87,6 @@ public class DiplomadoController {
         return ResponseEntity.ok(diplomadoAtualizado);
     }
 
-    // Endpoint para deletar um diplomado
     @Operation(summary = "Deleta um diplomado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Diplomado excluído com sucesso"),
